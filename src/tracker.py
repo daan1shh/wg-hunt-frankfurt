@@ -132,7 +132,7 @@ def format_sheet(ws):
     status_col = cols.get("Status")
     if status_col:
         sl = get_column_letter(status_col)
-        rng = f"A2:{last}1000"
+        rng = f"{sl}2:{sl}1000"
         ws.data_validations = DataValidationList()
         dv = DataValidation(type="list", formula1='"' + ",".join(STATUSES) + '"', allow_blank=True)
         dv.add(f"{sl}2:{sl}1000")
