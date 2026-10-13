@@ -234,6 +234,8 @@ def row_from_listing(L, result):
 def auto_status(L, result):
     if result["rejected"]:
         return "Rejected"
+    if L.get("furnished") is False:
+        return "Needs review"  # unfurnished: fallback only, don't draft
     if L.get("trick_question") or L.get("hold_reasons"):
         return "On hold (trick Q)"
     if result["covers"] == "Partly" or (L.get("anmeldung") or "").lower() == "no":

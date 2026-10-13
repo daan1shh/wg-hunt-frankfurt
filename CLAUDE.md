@@ -28,6 +28,7 @@ Build progress goes phase by phase. Finish a phase, show the result, wait for th
 - All WG types are fine. No age, gender or Stadtteil preference.
 - Language follows the ad (DE → German version, EN → English). If the ad asks for German, use German.
 - The rent cap is **warm** (Gesamtmiete, all-in).
+- **Unfurnished is a fallback only** (buying furniture for 6 months then selling it is too much hassle). Score -30 and status Needs review, never drafted unless the user asks. Teilmöbliert -8.
 - Templates were cleaned once (em dashes and semicolons → full stops or commas, approved diff).
   `extract_template.py` won't overwrite them without `--force`.
 

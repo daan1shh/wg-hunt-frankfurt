@@ -42,6 +42,8 @@ scoring:
   flatmates_allowed_at_rent_cap: 2
   flatmate_penalty_each: 0.35      # share of flatmate points lost per extra flatmate
   anmeldung_no_penalty: 10         # extra points off if Anmeldung explicitly impossible
+  unfurnished_penalty: 30          # buying furniture for 6 months is not worth it; fallback only
+  partly_furnished_penalty: 8      # teilmöbliert: some things to buy
   mid_nov_cutoff: 2026-11-20       # "mid-November move-in works" if available by this date
 
 lint:

@@ -133,6 +133,15 @@ def score(listing, cfg=None):
     else:
         total += w["anmeldung"] * 0.4
 
+    # furnishing: unfurnished is a fallback only
+    f = listing.get("furnished")
+    if f is False or str(f).lower() in ("no", "unmöbliert", "false"):
+        total -= s["unfurnished_penalty"]
+        parts.append("UNFURNISHED")
+    elif isinstance(f, str) and "teil" in f.lower():
+        total -= s["partly_furnished_penalty"]
+        parts.append("partly furnished")
+
     final = int(round(max(0.0, min(100.0, total))))
     return {"score": final, "covers": covers, "rejected": False, "reasons": [],
             "why": f"{final}: " + ", ".join(parts)}
