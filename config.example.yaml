@@ -1,0 +1,61 @@
+# Copy to config.yaml (gitignored) and fill in your own values.
+
+applicant:
+  move_in_earliest: 2026-11-15     # earliest possible move-in
+  need_from: 2026-12-01            # window the room must cover
+  need_until: 2027-05-31
+
+office:
+  name: Office
+  address: "Example Street 1, 60311 Frankfurt am Main"
+  arrival_time: "09:00"            # weekday arrival used for transit lookups
+
+search:
+  city: Frankfurt am Main
+  city_id: 41                      # WG-Gesucht city id
+  max_rent_warm: 800               # EUR, Gesamtmiete
+  types: [wg-zimmer, 1-zimmer-wohnung, wohnung]
+
+sending:
+  enabled: false                   # draft-only until assets/ holds the collage
+  user_clicks_send: true           # Claude fills the form, the user presses send
+  max_per_day: 5
+  pause_seconds: [90, 240]         # random pause between messages
+  follow_up_days: 4
+  collage: assets/collage.jpg
+
+scoring:
+  weights:                         # sum to 100
+    rent: 30
+    flatmates: 15
+    commute: 35
+    room_size: 5
+    dates: 10
+    anmeldung: 5
+  rent_full_at: 500                # full rent points at or below this
+  commute_full_at_min: 15          # full commute points at or below this transit time
+  commute_zero_at_min: 50
+  room_min_m2: 10                  # slight penalty below this, never a reject
+  room_zero_at_m2: 6
+  # flatmates allowed before penalties start, interpolated by rent
+  flatmates_allowed_at_rent_full: 5
+  flatmates_allowed_at_rent_cap: 2
+  flatmate_penalty_each: 0.35      # share of flatmate points lost per extra flatmate
+  anmeldung_no_penalty: 10         # extra points off if Anmeldung explicitly impossible
+  mid_nov_cutoff: 2026-11-20       # "mid-November move-in works" if available by this date
+
+lint:
+  length_tolerance: 0.25           # warn if a draft differs from the master by more than this
+  banned_phrases:
+    - "I am writing to express"
+    - "I hope this message finds you well"
+    - "delve"
+    - "vibrant"
+    - "Furthermore"
+    - "Moreover"
+    - "In conclusion"
+    - "I am reaching out"
+    - "tapestry"
+    - "embark"
+    - "Hiermit bewerbe ich mich"
+    - "Sehr geehrte"

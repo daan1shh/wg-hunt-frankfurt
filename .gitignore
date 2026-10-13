@@ -1,0 +1,17 @@
+# personal data, never committed (public repo)
+*.docx
+WG tracker.xlsx
+~$*
+listings/
+drafts/
+assets/
+backups/
+templates/master_*.txt
+config.yaml
+CLAUDE.local.md
+PROMPT_*.md
+.claude/settings.local.json
+
+__pycache__/
+*.pyc
+.DS_Store
