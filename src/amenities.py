@@ -1,4 +1,4 @@
-"""Nearest stations and amenities from OpenStreetMap, written into listings/<id>.json.
+"""Nearest stations and supermarkets from OpenStreetMap, written into listings/<id>.json.
 
     python src/amenities.py <id> [<id> ...] [--force]
 
@@ -19,8 +19,6 @@ from common import LISTINGS, load_config
 
 UA = "wg-hunt-frankfurt/0.1 (personal room search)"
 OVERPASS = ["https://overpass-api.de/api/interpreter", "https://overpass.kumi.systems/api/interpreter"]
-NICHE_GYM = re.compile(r"yoga|pilates|ems\b|physio|reha|tanz|dance|boxing|crossfit|kampfsport", re.I)
-NOT_A_PARK = re.compile(r"spielplatz|friedhof$", re.I)
 
 
 def _get(url, data=None):
@@ -52,13 +50,10 @@ rel(bn.s)[type=route][route~"^(tram|subway|light_rail|train|bus)$"];
 out body;
 (nwr(around:1500,{a})[shop=supermarket];
  nwr(around:1500,{a})[shop=chemist];
- nwr(around:2000,{a})[leisure=fitness_centre];
- nwr(around:2000,{a})[amenity=pharmacy];);
-out tags center;
-nwr(around:2500,{a})[leisure=park][name];
-out tags geom;"""
+);
+out tags center;"""
     data = urllib.parse.urlencode({"data": q}).encode()
-    for attempt in range(4):
+    for attempt in range(3):
         try:
             return _get(OVERPASS[attempt % 2], data)["elements"]
         except Exception as e:  # server busy: back off and try the mirror
@@ -129,34 +124,25 @@ def stations(P, E):
 
 
 def amenities(P, E):
-    shops = []
+    """Nearest 3 supermarkets plus the nearest drugstore (dm / Rossmann). Nothing else."""
+    shops, drug = [], []
     for e in E:
         t = e.get("tags", {})
         name = t.get("brand") or t.get("name") or ""
-        if t.get("shop") == "supermarket" or (t.get("shop") == "chemist" and re.search(r"\bdm\b|rossmann", name, re.I)):
+        if t.get("shop") == "supermarket":
             shops.append((dist(P, _centre(e)), {"Netto Marken-Discount": "Netto"}.get(name, name or "Supermarkt")))
-    out = [f"{n} {walk_min(d)} min" for d, n in sorted(shops)[:2]]
-
-    parks = []
-    for e in E:
-        t = e.get("tags", {})
-        if t.get("leisure") == "park" and t.get("name") and not NOT_A_PARK.search(t["name"]):
-            pts = [(p["lat"], p["lon"]) for p in e.get("geometry", []) if p] or \
-                  [(p["lat"], p["lon"]) for m in e.get("members", []) for p in m.get("geometry", []) if p]
-            if pts:
-                parks.append((min(dist(P, q) for q in pts), t["name"]))
-    if parks:
-        d, n = min(parks)
+        elif t.get("shop") == "chemist" and re.search(r"\bdm\b|rossmann", name, re.I):
+            drug.append((dist(P, _centre(e)), name))
+    out, names = [], set()
+    for d, n in sorted(shops):
+        if n not in names:  # nearest of each brand only
+            names.add(n)
+            out.append(f"{n} {walk_min(d)} min")
+        if len(out) == 3:
+            break
+    if drug:
+        d, n = min(drug)
         out.append(f"{n} {walk_min(d)} min")
-
-    gyms = sorted((dist(P, _centre(e)), e["tags"].get("brand") or e["tags"].get("name") or "Gym")
-                  for e in E if e.get("tags", {}).get("leisure") == "fitness_centre")
-    real = [g for g in gyms if not NICHE_GYM.search(g[1])] or gyms
-    if real:
-        out.append(f"{real[0][1]} {walk_min(real[0][0])} min")
-    pharm = sorted(dist(P, _centre(e)) for e in E if e.get("tags", {}).get("amenity") == "pharmacy")
-    if pharm:
-        out.append(f"Apotheke {walk_min(pharm[0])} min")
     return ", ".join(out)
 
 
@@ -174,7 +160,11 @@ def run(ids, force=False):
         except LookupError:
             P = geocode(f"{L.get('stadtteil') or ''}, Frankfurt am Main")
             L["approx_location"] = True
-        E = overpass(*P)
+        try:
+            E = overpass(*P)
+        except RuntimeError:
+            print(f"{lid}: Overpass unavailable, skipped (rerun later)")
+            continue
         L.update(lat=round(P[0], 5), lon=round(P[1], 5), straight_km=round(dist(P, office) / 1000, 1),
                  stations=stations(P, E), amenities=amenities(P, E))
         path.write_text(json.dumps(L, ensure_ascii=False, indent=2), encoding="utf-8")
