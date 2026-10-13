@@ -26,8 +26,8 @@ sending:
 
 scoring:
   weights:                         # sum to 100
-    rent: 30
-    flatmates: 15
+    rent: 25
+    flatmates: 20
     commute: 35
     room_size: 5
     dates: 10
@@ -37,13 +37,16 @@ scoring:
   commute_zero_at_min: 50
   room_min_m2: 10                  # slight penalty below this, never a reject
   room_zero_at_m2: 6
-  # flatmates allowed before penalties start, interpolated by rent
+  # flatmates allowed before penalties start: 5 at rent_full_at, 2 at rent_high, linear between
+  rent_high: 750
   flatmates_allowed_at_rent_full: 5
-  flatmates_allowed_at_rent_cap: 2
-  flatmate_penalty_each: 0.35      # share of flatmate points lost per extra flatmate
+  flatmates_allowed_at_rent_high: 2
+  flatmate_penalty_each: 0.4       # share of flatmate points lost per extra flatmate
   anmeldung_no_penalty: 10         # extra points off if Anmeldung explicitly impossible
   unfurnished_penalty: 30          # buying furniture for 6 months is not worth it; fallback only
   partly_furnished_penalty: 8      # teilmöbliert: some things to buy
+  long_lease_penalty: 15           # own main lease / Nachmieter / minimum term past the window
+  partial_cover_penalty: 35        # scaled by the share of Dec-May NOT covered
   mid_nov_cutoff: 2026-11-20       # "mid-November move-in works" if available by this date
 
 lint:

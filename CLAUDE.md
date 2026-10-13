@@ -5,7 +5,12 @@ draft personal messages from a master skeleton, and send only what the user appr
 Personal details (who, dates, office) live in `CLAUDE.local.md` and `config.yaml`, both gitignored.
 
 ## Workflow
-`/wg-scan` → `/wg-draft` → `/wg-status` (user approves) → `/wg-send` (user clicks send).
+Two skills:
+- `/wg-scan [N | status]`: bulk scan. Reads as many plausible ads as possible and logs them, scored,
+  for the user to review **personally**. Never contacts anyone.
+- `/wg-message`: drafts and fills the contact form for listings the user picks. **Disabled** until the
+  photo collage and flatmate notes are in `assets/` and `sending.enabled: true`.
+
 Build progress goes phase by phase. Finish a phase, show the result, wait for the user's OK.
 
 | Phase | What | State |
@@ -13,11 +18,10 @@ Build progress goes phase by phase. Finish a phase, show the result, wait for th
 | 0 | Setup questions | done 2026-10-13 |
 | 1 | Repo skeleton | done 2026-10-13 |
 | 2 | Tracker columns (`tracker.py migrate` on the real tracker) | done 2026-10-13 |
-| 3 | Scanning, test run of 5 ads | next |
-| 4 | Scoring tuned on real ads | |
-| 5 | Drafting | |
-| 6 | Trick questions and holds | |
-| 7 | Sending | **disabled** until the collage and flatmate notes are in `assets/` |
+| 3 | Scanning, test run of 5 ads | done 2026-10-13 |
+| 4 | Scoring tuned on real ads, skills cut to wg-scan + wg-message | done 2026-10-13 |
+| 5 | Bulk scanning, user reviews ads personally | **current** |
+| 6 | Messaging (`/wg-message`) | later, once `assets/` has the collage and flatmate notes |
 
 ## Decisions
 - Repo is **public**. Personal data is gitignored: `*.docx`, the tracker, `listings/`, `drafts/`,
@@ -28,6 +32,7 @@ Build progress goes phase by phase. Finish a phase, show the result, wait for th
 - All WG types are fine. No age, gender or Stadtteil preference.
 - Language follows the ad (DE → German version, EN → English). If the ad asks for German, use German.
 - The rent cap is **warm** (Gesamtmiete, all-in).
+- **Long leases** (Nachmieter / own main lease / minimum term past May) get -15 and Needs review.
 - **Unfurnished is a fallback only** (buying furniture for 6 months then selling it is too much hassle). Score -30 and status Needs review, never drafted unless the user asks. Teilmöbliert -8.
 - Templates were cleaned once (em dashes and semicolons → full stops or commas, approved diff).
   `extract_template.py` won't overwrite them without `--force`.
@@ -50,10 +55,15 @@ Build progress goes phase by phase. Finish a phase, show the result, wait for th
 config.example.yaml   copy to config.yaml: dates, office, budget, weights, send limit
 src/common.py         paths, config, dates
 src/tracker.py        init-template | migrate | has | upsert | set | list
-src/score.py          hard filters + 0-100 score with a one-line "why"
+src/score.py          hard filters + 0-100 score, one-line "why", per-component points
+src/amenities.py      stations + amenities from OpenStreetMap (Nominatim + Overpass, via curl)
 src/draft.py          fill skeleton, write drafts/<id>.md with lint result
 src/lint_message.py   message style checks, exit 1 on violation
 src/extract_template.py  .docx → templates/master_{en,de}.txt
-.claude/skills/       wg-scan, wg-draft, wg-send, wg-status
+.claude/skills/       wg-scan, wg-message
 ```
 The listing JSON schema is in `.claude/skills/wg-scan/SKILL.md`.
+
+## Open questions
+- Gender part of "Gesucht wird": no rule set yet. The scan records it in `wanted` and judges `eligible` on age only.
+- 6019405 (Karla, Bockenheim): asks for contact by phone or email. The user decides.

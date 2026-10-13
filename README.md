@@ -3,11 +3,10 @@
 A small, human-in-the-loop pipeline for finding a room on WG-Gesucht in Frankfurt. It runs as
 Claude Code project skills, driving your own logged-in Chrome session at a human pace.
 
-1. **`/wg-scan`** reads new ads (WG-Zimmer, 1-Zimmer-Wohnung, Wohnung), looks up commute
-   time to your office and nearby amenities, and logs scored rows in an Excel tracker.
-2. **`/wg-draft`** fills your message skeleton with details from each ad and lints it.
-3. **`/wg-status`** shows drafts to approve, ads on hold and follow-ups due.
-4. **`/wg-send`** fills the contact form for approved drafts. You press send yourself.
+1. **`/wg-scan`** reads new ads (WG-Zimmer, 1-Zimmer-Wohnung, Wohnung) in bulk, looks up commute
+   time to your office and nearby amenities, and logs scored rows in an Excel tracker for you to review.
+2. **`/wg-message`** (once you're ready) fills your message skeleton with details from the ads you
+   picked, lints it, and fills the contact form. You press send yourself.
 
 Ads with a "did you read this?" check (codewords, questions, "write in German") are put
 on hold for you to answer instead of being sent.
@@ -33,6 +32,7 @@ python3 src/tracker.py list                    # tracker overview, best score fi
 python3 src/tracker.py upsert <id>             # score listings/<id>.json and write its row
 python3 src/tracker.py set <id> Status=Approved
 python3 src/score.py <id>                      # score breakdown for one listing
+python3 src/amenities.py <id>                  # stations + amenities from OpenStreetMap
 python3 src/draft.py fill en "Lena" "your balcony"
 python3 src/lint_message.py drafts/<id>.md --lang en
 ```

@@ -18,7 +18,7 @@ from openpyxl.utils import get_column_letter
 from openpyxl.worksheet.datavalidation import DataValidation, DataValidationList
 
 from common import ROOT, load_config, load_listing, to_date
-from score import score
+from score import long_lease, score
 
 TRACKER = ROOT / "WG tracker.xlsx"
 TEMPLATE = ROOT / "tracker_template.xlsx"
@@ -234,8 +234,8 @@ def row_from_listing(L, result):
 def auto_status(L, result):
     if result["rejected"]:
         return "Rejected"
-    if L.get("furnished") is False:
-        return "Needs review"  # unfurnished: fallback only, don't draft
+    if L.get("furnished") is False or long_lease(L, load_config()):
+        return "Needs review"  # unfurnished or hard to leave: fallback only, don't draft
     if L.get("trick_question") or L.get("hold_reasons"):
         return "On hold (trick Q)"
     if result["covers"] == "Partly" or (L.get("anmeldung") or "").lower() == "no":
