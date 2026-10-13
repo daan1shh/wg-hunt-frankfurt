@@ -12,8 +12,8 @@ Build progress goes phase by phase. Finish a phase, show the result, wait for th
 |---|---|---|
 | 0 | Setup questions | done 2026-10-13 |
 | 1 | Repo skeleton | done 2026-10-13 |
-| 2 | Tracker columns (`tracker.py migrate` on the real tracker) | next |
-| 3 | Scanning, test run of 5 ads | |
+| 2 | Tracker columns (`tracker.py migrate` on the real tracker) | done 2026-10-13 |
+| 3 | Scanning, test run of 5 ads | next |
 | 4 | Scoring tuned on real ads | |
 | 5 | Drafting | |
 | 6 | Trick questions and holds | |

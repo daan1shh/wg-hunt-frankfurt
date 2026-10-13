@@ -15,6 +15,7 @@ import openpyxl
 from openpyxl.formatting.rule import FormulaRule
 from openpyxl.styles import Alignment, Font, PatternFill
 from openpyxl.utils import get_column_letter
+from openpyxl.worksheet.datavalidation import DataValidation, DataValidationList
 
 from common import ROOT, load_config, load_listing, to_date
 from score import score
@@ -132,6 +133,10 @@ def format_sheet(ws):
     if status_col:
         sl = get_column_letter(status_col)
         rng = f"A2:{last}1000"
+        ws.data_validations = DataValidationList()
+        dv = DataValidation(type="list", formula1='"' + ",".join(STATUSES) + '"', allow_blank=True)
+        dv.add(f"{sl}2:{sl}1000")
+        ws.add_data_validation(dv)
         ws.conditional_formatting = type(ws.conditional_formatting)()
         for status, colour in STATUS_FILLS.items():
             ws.conditional_formatting.add(rng, FormulaRule(
