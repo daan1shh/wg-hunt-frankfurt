@@ -27,7 +27,15 @@ python3 src/tracker.py has <id>    # exit 0 = tracked, skip it
 **Test run = 5 ads.** Otherwise stop after the number the user asked for (default 15).
 
 ## 3. Read each ad fully
-Open the ad and read with `get_page_text`: Zimmer/Wohnung details, Kosten, Adresse,
+`get_page_text` alone **misses the hidden Lage / WG-Leben / Sonstiges tabs**, which is where
+trick questions hide. So after navigating, first run this with `javascript_tool`, then `get_page_text`:
+```js
+document.querySelectorAll('[id^="freitext_"]').forEach(e => { let n = e; for (let k = 0; k < 4 && n; k++, n = n.parentElement) { n.style.display = 'block'; n.style.visibility = 'visible'; n.classList.remove('hidden','collapse'); } const h = document.createElement('p'); h.textContent = '### SECTION ' + e.id; e.prepend(h); });
+```
+(freitext_0 = Zimmer/Wohnung, 1 = Lage, 2 = WG-Leben, 3 = Sonstiges.) Batch the wait, navigate,
+unhide and get_page_text calls into one `browser_batch` per ad.
+
+Read: Zimmer/Wohnung details, Kosten, Adresse,
 Verfügbarkeit, Lage, WG-Leben, Sonstiges, the free-text description, and the flatmate
 sidebar. Pause a few seconds between ads, like a person reading. If a captcha or
 rate-limit page appears, **stop and tell the user**.
@@ -41,6 +49,8 @@ zwischenmiete (bool), flatmates_count, flatmates_detail ("2: Lena 26 w, Tom 29 m
 wg_type, wg_languages, smoking, furnished (bool), anmeldung ("Yes" | "No" | "Unknown"),
 dist_km, transit_min, bike_min, walk_min, approx_location (bool), stations, amenities,
 contacts (list of names), ad_language ("DE" | "EN"), trick_question (exact text or null),
+wanted (the "Gesucht wird" text), eligible (false if the wanted age or gender excludes the
+applicant, null if unclear),
 hold_reasons (list), scam_flags (list), notes, sections {heading: text}, description (raw)
 ```
 Dates as ISO `YYYY-MM-DD`. `gesamtmiete` is warm and all-in: if the ad only gives
@@ -58,7 +68,18 @@ requested up front, anything only the user can answer.
 ## 4. Commute and amenities
 From the ad address (or street or Stadtteil if that's all there is; set `approx_location`)
 to the office in `config.yaml`: Google Maps transit for a weekday 09:00 arrival, bike time,
-walk time if under 30 min, route distance in km. Nearest S/U/Tram stops with lines and
+walk time if under 30 min, route distance in km.
+
+Google Maps URLs that work (the old `ttype=arr&time=` params are ignored):
+```
+transit, arrive by 09:00: https://www.google.com/maps/dir/<origin>/<office>/data=!4m6!4m5!2m3!6e1!7e2!8j<epoch>!3e3?hl=de
+bike:                     https://www.google.com/maps/dir/<origin>/<office>/data=!4m2!4m1!3e1?hl=de
+```
+`<epoch>` is the next weekday 09:00 written as if it were UTC (2026-10-14 09:00 → 1791968400,
+add 86400 per day). Read the results with `javascript_tool`:
+`[...document.querySelectorAll('[data-travel_mode]')].map(e=>e.innerText.trim()).join('|') + ' ## ' + document.querySelector('[role="main"]').innerText.replace(/\s+/g,' ').slice(0,450)`.
+The chips are Beste | car | transit | walk | bike. The panel text gives lines and km. Dismiss the
+Google cookie banner with the most privacy-preserving option if it appears. Nearest S/U/Tram stops with lines and
 walking minutes. Two nearest supermarkets with distance, plus a park, gym or anything
 notable. Keep `amenities` to one compact line, e.g.
 `Rewe 3 min, Aldi 6 min, Rebstockpark 5 min, FitX 8 min`.

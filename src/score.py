@@ -48,6 +48,8 @@ def score(listing, cfg=None):
         reasons.append(f"Gesamtmiete {rent} EUR over {cap} cap")
     if covers == "No":
         reasons.append("availability does not cover Dec to May")
+    if listing.get("eligible") is False:
+        reasons.append(f"not eligible, ad wants: {listing.get('wanted') or 'see ad'}")
     if listing.get("scam_flags"):
         reasons.append("suspected scam: " + ", ".join(listing["scam_flags"]))
     if reasons:
