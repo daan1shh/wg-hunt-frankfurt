@@ -5,7 +5,7 @@
     python src/tracker.py has <id>                 # exit 0 if the listing is already tracked
     python src/tracker.py upsert <id> [<id> ...]   # write rows from listings/<id>.json, scored
     python src/tracker.py set <id> Col=value ...   # e.g. Status=Sent "Sent on=2026-11-02"
-    python src/tracker.py list [--status S]        # print rows for /wg-status
+    python src/tracker.py list [--status S]        # print rows, best score first
 """
 import datetime as dt
 import shutil
