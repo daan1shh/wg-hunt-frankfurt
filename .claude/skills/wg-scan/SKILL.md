@@ -57,8 +57,8 @@ min_months, long_lease (bool), flatmates_count, flatmates_detail ("2: Lena 26, T
 wg_type, wg_languages, smoking, furnished (true | false | "teilmöbliert"),
 anmeldung ("Yes" | "No" | "Unknown"), dist_km, transit_min, bike_min, walk_min,
 approx_location (bool), stations, amenities, contacts (list of names), ad_language ("DE" | "EN"),
-wanted (the "Gesucht wird" text), eligible (false if the ad's wanted age excludes the applicant,
-null if unclear), trick_question (exact text or null), hold_reasons (list), scam_flags (list),
+wanted (the "Gesucht wird" text), eligible (false if the wanted age or gender excludes the
+applicant, null if unclear), trick_question (exact text or null), hold_reasons (list), scam_flags (list),
 notes, sections {heading: text}, description (raw)
 ```
 Rules when filling it in:
@@ -69,8 +69,9 @@ Rules when filling it in:
 - `long_lease`: true when you'd become the main tenant (Nachmieter, own Hauptmietvertrag with
   the landlord). Leaving after May then needs ~3 months' notice. `min_months` comes from
   "Mindestmietdauer".
-- `eligible`: judge **age** only. Put the gender part of "Gesucht wird" in `wanted` and leave it
-  to the user, because the user hasn't set a gender rule.
+- `eligible`: judge **age and gender** against `applicant.gender` in `config.yaml`. Female-only,
+  "Mitbewohnerin", FLINTA* and similar ads are `false` for `m`, and the tracker rejects them.
+  A mere preference ("prefer women") stays `true` with a note.
 - **Scam flags**: rent far below market for size and area, payment or deposit before a viewing,
   "I'm abroad", keys by post, contact only via external email or WhatsApp.
 - **Holds**: anything checking the ad was read (a codeword, a word in the subject, "start with

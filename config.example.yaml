@@ -4,6 +4,7 @@ applicant:
   move_in_earliest: 2026-11-15     # earliest possible move-in
   need_from: 2026-12-01            # window the room must cover
   need_until: 2027-05-31
+  gender: null                       # m | f | null. Ads that exclude it are rejected
 
 office:
   name: Office

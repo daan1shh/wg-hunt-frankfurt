@@ -29,7 +29,8 @@ Build progress goes phase by phase. Finish a phase, show the result, wait for th
   Committed: code, skills, `config.example.yaml`, `templates/example_*.txt`, `tracker_template.xlsx`.
 - The user **always clicks "Nachricht senden" themselves**. Claude fills the form and attaches the
   collage, then stops. Max 5 messages per day, with pauses between them.
-- All WG types are fine. No age, gender or Stadtteil preference.
+- All WG types are fine. No preference on flatmates' age, gender or Stadtteil.
+- Ads that exclude the applicant's gender (`applicant.gender` in `config.yaml`) are skipped: `eligible: false` → Rejected.
 - Language follows the ad (DE → German version, EN → English). If the ad asks for German, use German.
 - The rent cap is **warm** (Gesamtmiete, all-in).
 - **Long leases** (Nachmieter / own main lease / minimum term past May) get -15 and Needs review.
@@ -65,5 +66,4 @@ src/extract_template.py  .docx → templates/master_{en,de}.txt
 The listing JSON schema is in `.claude/skills/wg-scan/SKILL.md`.
 
 ## Open questions
-- Gender part of "Gesucht wird": no rule set yet. The scan records it in `wanted` and judges `eligible` on age only.
 - 6019405 (Karla, Bockenheim): asks for contact by phone or email. The user decides.
