@@ -33,6 +33,7 @@ Build progress goes phase by phase. Finish a phase, show the result, wait for th
 - Ads that exclude the applicant's gender (`applicant.gender` in `config.yaml`) are skipped: `eligible: false` → Rejected.
 - Language follows the ad (DE → German version, EN → English). If the ad asks for German, use German.
 - The rent cap is **warm** (Gesamtmiete, all-in).
+- **No Anmeldung needed** (`applicant.needs_anmeldung: false`): the applicant stays registered elsewhere in Germany and stays at most 6 months (BMG §27(2)). Messages don't ask for one, they say it isn't needed. Anmeldung doesn't affect score or status.
 - **Long leases** (Nachmieter / own main lease / minimum term past May) get -15 and Needs review.
 - **Unfurnished is a fallback only** (buying furniture for 6 months then selling it is too much hassle). Score -30 and status Needs review, never drafted unless the user asks. Teilmöbliert -8.
 - Templates were cleaned once (em dashes and semicolons → full stops or commas, approved diff).

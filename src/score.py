@@ -123,9 +123,11 @@ def score(listing, cfg=None):
         pts["dates"] = -s["partial_cover_penalty"] * (1 - share)
         parts.append(f"covers only {share:.0%} of Dec to May")
 
-    # Anmeldung
+    # Anmeldung, only if the applicant needs to register there
     a = (listing.get("anmeldung") or "Unknown").lower()
-    if a == "yes":
+    if not cfg["applicant"].get("needs_anmeldung", True):
+        pass
+    elif a == "yes":
         pts["anmeldung"] = w["anmeldung"]
         parts.append("Anmeldung ok")
     elif a == "no":

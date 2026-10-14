@@ -4,6 +4,7 @@ applicant:
   move_in_earliest: 2026-11-23     # earliest possible move-in (last week of November)
   need_from: 2026-12-01            # window the room must cover
   need_until: 2027-05-31
+  needs_anmeldung: true           # false if you stay registered elsewhere in Germany (stay <= 6 months)
   gender: null                       # m | f | null. Ads that exclude it are rejected
 
 office:

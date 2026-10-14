@@ -232,13 +232,15 @@ def row_from_listing(L, result):
 
 
 def auto_status(L, result):
+    cfg = load_config()
     if result["rejected"]:
         return "Rejected"
-    if L.get("furnished") is False or long_lease(L, load_config()):
+    if L.get("furnished") is False or long_lease(L, cfg):
         return "Needs review"  # unfurnished or hard to leave: fallback only, don't draft
     if L.get("trick_question") or L.get("hold_reasons"):
         return "On hold (trick Q)"
-    if result["covers"] == "Partly" or (L.get("anmeldung") or "").lower() == "no":
+    no_anmeldung = (L.get("anmeldung") or "").lower() == "no" and cfg["applicant"].get("needs_anmeldung", True)
+    if result["covers"] == "Partly" or no_anmeldung:
         return "Needs review"
     return "New"
 
