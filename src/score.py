@@ -111,9 +111,9 @@ def score(listing, cfg=None):
                 (avail_until - need_until).days <= 45:
             pts["dates"] += w["dates"] * 0.2
             parts.append("Zwischenmiete fits")
-        if avail_from is None or avail_from <= to_date(s["mid_nov_cutoff"]):
+        if avail_from is None or avail_from <= to_date(s["early_move_in_cutoff"]):
             pts["dates"] += w["dates"] * 0.2
-            parts.append("mid-Nov move-in ok")
+            parts.append("late-Nov move-in ok")
     else:
         # penalty grows with the share of the Dec-May window that is not covered
         need_from = to_date(cfg["applicant"]["need_from"])

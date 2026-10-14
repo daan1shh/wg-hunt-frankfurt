@@ -1,7 +1,7 @@
 # Copy to config.yaml (gitignored) and fill in your own values.
 
 applicant:
-  move_in_earliest: 2026-11-15     # earliest possible move-in
+  move_in_earliest: 2026-11-23     # earliest possible move-in (last week of November)
   need_from: 2026-12-01            # window the room must cover
   need_until: 2027-05-31
   gender: null                       # m | f | null. Ads that exclude it are rejected
@@ -48,7 +48,7 @@ scoring:
   partly_furnished_penalty: 8      # teilmöbliert: some things to buy
   long_lease_penalty: 15           # own main lease / Nachmieter / minimum term past the window
   partial_cover_penalty: 35        # scaled by the share of Dec-May NOT covered
-  mid_nov_cutoff: 2026-11-20       # "mid-November move-in works" if available by this date
+  early_move_in_cutoff: 2026-11-30 # "late-November move-in works" if available by this date
 
 lint:
   length_tolerance: 0.25           # warn if a draft differs from the master by more than this
